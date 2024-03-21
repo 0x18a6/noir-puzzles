@@ -1,41 +1,34 @@
 # Noir Puzzles
 
-## Requirements
-- Install [Noir](https://noir-lang.org/getting_started/nargo_installation)
-- Install [Foundry](https://book.getfoundry.sh/getting-started/installation)
+Solution for Noir Puzzles.
 
-## Introductory Noir puzzles
-- [Addition](https://github.com/RareSkills/noir-puzzles/tree/main/circuits/Addition)
-- [Global](https://github.com/RareSkills/noir-puzzles/tree/main/circuits/Global)
-- [For Loop](https://github.com/RareSkills/noir-puzzles/tree/main/circuits/ForLoop)
-- [Power](https://github.com/RareSkills/noir-puzzles/tree/main/circuits/Power)
-- [Range](https://github.com/RareSkills/noir-puzzles/tree/main/circuits/Range)
-- [Dot-Product](https://github.com/RareSkills/noir-puzzles/tree/main/circuits/Dot-Product)
-- [Typecast](https://github.com/RareSkills/noir-puzzles/tree/main/circuits/Typecast)
-- [Module](https://github.com/RareSkills/noir-puzzles/tree/main/circuits/Module)
-- [Max edge](https://github.com/RareSkills/noir-puzzles/tree/main/circuits/Max-Edge)
-- [Salt](https://github.com/RareSkills/noir-puzzles/tree/main/circuits/Salt)
-- [Poseidon](https://github.com/RareSkills/noir-puzzles/tree/main/circuits/Poseidon)
+![noir](sticker.webp)
 
-## Noir puzzles with Foundry testing 
-- [HelloNoir](https://github.com/RareSkills/noir-puzzles/tree/main/circuits/HelloNoir)
-- [Sudoku](https://github.com/RareSkills/noir-puzzles/tree/main/circuits/Sudoku)
-- [Sujiko](https://github.com/RareSkills/noir-puzzles/tree/main/circuits/Sujiko)
+## Debugging
 
+### `PUBLIC_INPUT_COUNT_INVALID(x, y)`:
 
-## Test your introductory puzzle solutions (excluding Sudoku and Sujiko)
+A circuit doesn't have the concept of a return value. Return values are just syntactic sugar ✨ in Noir.
+Under the hood, the return value is passed as an input to the circuit and is checked at the end of the circuit program.
 
-Go to the relevant directory 
+For example, if you have Noir program like this:
 
-```bash
-cd circuits/<Relevant Puzzle>
+```rust
+fn main(
+    // Public inputs
+    pubkey_x: pub Field,
+    pubkey_y: pub Field,
+    // Private inputs
+    priv_key: Field,
+) -> pub Field
 ```
 
-```bash
-nargo test
-```
+The `verify()` function will expect the public inputs array (second function parameter) to be of length 3, the two inputs and the return value. Like before, these values are populated in Verifier.toml after running `nargo prove`.
 
+Passing only two inputs will result in an error such as `PUBLIC_INPUT_COUNT_INVALID(3, 2)`.
+
+In this case, the inputs parameter to `verify` would be an array ordered as `[pubkey_x, pubkey_y, return]`.
 
 ## Helpful Links
-Information about writting custom forloops can be found [here](https://github.com/noir-lang/docs/issues/91#event-9026512607).
 
+- [Generate a Solidity Verifier](https://noir-lang.org/docs/dev/how_to/how-to-solidity-verifier/#step-4---verifying)
