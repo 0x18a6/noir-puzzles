@@ -1,10 +1,10 @@
 // Modify the "main" function to raise x by the power of y and return the result
 // of the exponent.
 
-// See here: https://noir-lang.org/standard_library/field_methods/#pow_32
+// See here: https://noir-lang.org/docs/dev/noir/concepts/data_types/fields/#pow_32
 
 fn main(x : Field, y : Field) -> pub Field {
-  // your code here
+  x.pow_32(y)
 }
 
 ////////////////////

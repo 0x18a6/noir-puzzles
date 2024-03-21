@@ -15,10 +15,23 @@
 // 5. Test your implementation by running the included "test_main" function with
 // 'nargo test' inside this directory.
 
-// See here: https://noir-lang.org/modules_packages_crates/modules/
+// See here: https://noir-lang.org/docs/dev/noir/modules_packages_crates/modules
+
+mod math;
 
 fn main(x : Field, y : Field, op : Field) -> pub Field {
-    // your code here
+
+    if op == 0 {
+        math::add(x, y)
+    } else if op == 1 {
+        math::sub(x, y)
+    } else if op == 2 {
+        math::mul(x, y) 
+    } else if op == 3 {
+        math::div(x, y)
+    } else {
+        0
+    }
 }
 
 ////////////////////

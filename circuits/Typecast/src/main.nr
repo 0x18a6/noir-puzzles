@@ -4,7 +4,7 @@
 // first. Then, perform the comparison and return the result.
 
 fn main(x : Field, y : pub Field) -> pub bool {
-  // your code here
+  x as u64 > y as u64
 }
 
 ////////////////////

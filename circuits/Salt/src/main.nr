@@ -3,12 +3,15 @@
 // mimc_bn254 as a hashing mechanism.
 // Return the hash result as a public field.
 
-// See here: https://noir-lang.org/standard_library/cryptographic_primitives/hashes/#mimc_bn254-and-mimc
+// See here: https://noir-lang.org/docs/dev/noir/standard_library/cryptographic_primitives/hashes#mimc_bn254-and-mimc
 // Note: An example of importing the standard library can be seen from the link below.
-//       https://noir-lang.org/standard_library/logging
+//       https://noir-lang.org/docs/dev/noir/standard_library/logging/
+
+use dep::std::hash::mimc;
 
 fn main(a : Field, salt : Field) -> pub Field {
-  // your code here
+  mimc::mimc_bn254([a, salt])
+  
 }
 
 ////////////////////

@@ -3,10 +3,14 @@
 // addition.
 // Note: The value of the last expression in a Noir function is implicitly returned.
 
-// See here: https://noir-lang.org/language_concepts/control_flow/#loops
+// See here: https://noir-lang.org/docs/dev/noir/concepts/control_flow/#loops
 
-fn main() -> pub Field {
-  // your code here
+fn main(x: [ Field; 3 ]) -> pub Field {
+  let mut output: Field = 0;
+  for i in 0..x.len() {
+    output += x[i];
+  }
+  output
 }
 
 ////////////////////

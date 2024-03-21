@@ -3,10 +3,16 @@
 // Return the result of the calculation.
 
 // Hint: you will need a loop
-// See here: https://noir-lang.org/language_concepts/control_flow/#loops
+// See here: https://noir-lang.org/docs/dev/noir/concepts/control_flow/#loops
 
 fn main(x : [ Field; 4 ], y : [ Field; 4 ]) -> pub Field {
-  // your code here
+  assert(x.len() == y.len());
+
+  let mut output: Field = 0;
+  for i in 0..x.len() {
+    output += x[i] * y[i];
+  }
+  output
 }
 
 ////////////////////
