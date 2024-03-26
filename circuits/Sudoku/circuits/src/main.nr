@@ -103,5 +103,4 @@ fn main(question: pub [Field; 16], answer : [Field; 16]) {
             assert(arr[i] == 1);
         }
     }
-    true
 }
