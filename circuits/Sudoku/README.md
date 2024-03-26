@@ -1,51 +1,83 @@
-# Sudoku
+# Suduko puzzle writeup
 
-In this puzzle we will integrate [Foundry](https://book.getfoundry.sh/) testing with Noir circuits.
+![](../../sticker.webp)
 
-![sudoku](https://github.com/burke-md/noir-puzzles/assets/22263098/608b1296-82fe-4148-8c81-1648ec2f971f)
+Constraints to assert are:
 
+- Sum of each row/column should be 10:
 
-### Goal: Create a 4×4 Sudoku verifier
-
-### Rules: 
-- There will be 4 columns and 4 rows. 
-- Sum of each row/column should be 10. 
-- Numbers from 1 to 4(inclusive) should be used for this.
-- There should be no repetition in numbers for any row/column .
-(For more information, checkout the circuit file)
-
-## Note:
-
-Within `main.nr` the `main()` the function signature will need to be updated. It currently does not include a return type.
-
-```
-fn main(question: pub [Field; 16], answer : [Field; 16]) 
+```rust
+  assert(10 == answer[0] + answer[1] + answer[2] + answer[3]);
+  assert(10 == answer[4] + answer[5] + answer[6] + answer[7]);
+  assert(10 == answer[8] + answer[9] + answer[10] + answer[11]);
+  assert(10 == answer[12] + answer[13] + answer[14] + answer[15]);
 ```
 
-This is to ensure users do not face a return value type error on first compile. The test suit will require a `bool` value be returned from `main()`.
+- There should be no repetition in numbers for any row/column:
 
-## Testing 
+```rust
+ for row in 0..4 {
+        let mut arr: [Field; 4]  = [0; 4];
+        for i in 0..4 {
+            arr[answer[row * 4 + i] - 1] += 1;
+        }
 
-Install Foundry 
-
-```bash
-curl -L https://foundry.paradigm.xyz | bash
+        for i in 0..4 {
+            assert(arr[i] == 1);
+        }
+    }
 ```
 
-Navigate to specific puzzle
+## Testing
 
-```bash
-cd circuits/<Sudoku>/circuits
+`main` function signature is `main(question: pub [Field; 16], answer: [Field; 16])`, a `bool` must be returned for the tests to pass though:
+
+```rust
+  #[test]
+  fn test_correct_solution() {
+    // ...
+    assert(main(question, answer) == true); // the returned bool will be used here
+  }
 ```
 
-Load submodules
+Therefore `main` should look like this for testing:
 
-```bash
-forge install
+```rust
+fn main(question: pub [Field; 16], answer: [Field; 16]) -> pub bool {
+  // ...
+
+  bool // returns bool
+}
 ```
 
-Run Foundry test
+[The thing with Noir](https://noir-lang.org/docs/dev/how_to/how-to-solidity-verifier/#step-4---verifying) is that:
 
-```bash
-forge test 
+> A circuit doesn't have the concept of a return value. Return values are just "syntactic sugar 💅"
+>
+> Under the hood, the return value is passed as an input to the circuit and is checked at the end of the circuit program.
+
+Therefore when trying to run `forge test`, you will get the following error:
+
 ```
+Failing tests:
+Encountered 1 failing test in test/Sudoku.t.sol:Noir
+[FAIL. Reason: PUBLIC_INPUT_COUNT_INVALID(17, 16)] test_correct_solution()
+```
+
+This is because the boolean is passed as an input to the circuit as well!
+
+## Generate the verifer: `nargo codegen-verifier`
+
+```
+[Suduko] Contract successfully created and located at ~/noir-puzzles/circuits/Sudoku/circuits/contract/Suduko/plonk_vk.sol`
+```
+
+## Prove the solution: `nargo prove`
+
+But what is the prover trying to prove exactly here anon?
+
+The prover is proving that he **knows at least one solution to a suduko in particular setup** without revealing his solution.
+
+## Verify the solution: `nargo verify`
+
+The verification will complete in silence if it is successful.
